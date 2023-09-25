@@ -1,10 +1,14 @@
 <script setup>
-import HelloWorld from './components/HelloWorld.vue'
-import TheWelcome from './components/TheWelcome.vue'
+import { ref } from 'vue'; 
+const header = ref('Mi Carrito de Compras')
 </script>
 
 <template>
-  <h1> Mi carrito de Compras </h1>
+  <h1> <i class="material-icons shopping-cart-icon">local_mall</i> {{ header}} </h1>
   </template> 
 
-  <style scoped>  </style>
+  <style scoped> 
+  .shopping-cart-icon{
+  font-size: 2rem;
+  }
+   </style>
