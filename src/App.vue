@@ -2,59 +2,66 @@
 import { ref } from 'vue';
 const header = ref('App Lista de compras');
 const items = ref([
- // {id: 1, label: '10 bolillos'},
-  //{id: 2, label: '1 lata de frijoles'},
-  //{id: 3, label: '2 lata de atún'}
+  { id: 1, label: '10 bolillos', purchased: true, highPriority: false },
+  { id: 2, label: '1 lata de frijoles', purchased: false, highPriority: true },
+  { id: 3, label: '2 lata de atún', purchased: true, highPriority: true }
 ]);
-// Agregado de metodo para guardar nuevo articulo en la lista
+//funcion que alterna el estado de comprado de newItems
+const togglePurchased = (item) =>{
+  //invertir la propiedad toggle
+  item.purchased = !item.purchased;
+}
 const saveItem = () => {
-  items.value .push({id: items.value.length + 1, label: newItem.value})
-  // limpiando el contenido  de newItems
-  newItem.value ="";
+  items.value.push({ id: items.value.length + 1, label: newItem.value })
+  //Limpiando el contenido de newItem
+  newItem.value = ""; 
 };
 const newItem = ref('');
 const newItemHighPriority = ref(false);
-const editing =ref(true);
+const editing = ref(false);
 const doEdit = (edit) => {
-  // altero la variable "editing"
+  //alteramos la variable esditing
   editing.value = edit;
-  // limpio el input de texto
+  // limpiamos el input de texto
   newItem.value = ""; 
 };
 </script>
 
 <template>
   <div class="header">
-
     <h1> <i class="material-icons shopping-cart-icon">local_mall</i> {{ header }}</h1>
-    <button  v-if ="!editing" @click="doEdit (true)" class="btn bnt-primary">Agregar articulos</button>
-    <button v-else @click="doEdit (false)" class="btn">Cancelar</button>
+    <button v-if="!editing" @click="doEdit(true)" class="btn btn-primary">Agregar</button>
+    <button v-else @click="doEdit(false)" class="btn btn-cancel">Cancelar</button>
   </div>
-    
-  <form  v-if="editing" v-on:submit.prevent="saveItem" class="add-item form">
-    <!-- Input de Nuevo Articulo -->
-    <input v-model.trim="newItem" type="text" placeholder="Ingresar nuevo articulo">
+  
+  <!-- <a v-bind:href="newItem">
+    <i class="material-icons shopping-cart-icon">link</i>
+  </a> -->
+
+  <form v-if="editing" v-on:submit.prevent= saveItem class="add-item form">
+    <!-- Input de nuevo articulo -->
+    <input class="addint" v-model.trim="newItem" type="text" placeholder="Ingresar articulo">
     <!-- Check Boxes -->
     <label>
-      <input v-model="newItemHighPriority" 
-      type="checkbox">
-      Alta Prioridad
+      <input v-model="newItemHighPriority" type="checkbox"> Alta Prioridad
     </label>
     {{ newItemHighPriority ? "🔥" : "🧊" }}
-    <!-- Boton de UI -->
-    <button class="btn btn-primary">Salvar Articulo</button>
+    <!-- boton en la UI -->
+    <button :disabled="newItem.length === 0" class="btn btn-primary">Salvar articulo</button>
   </form>
   <ul>
-    <li v-for="{ id, label } in items" v-bind:key="id">
+    <li v-for="({ id, label, purchased, highPriority }, index) in items" 
+    v-bind:key="id"
+    :class="{strikeout : purchased, priority: highPriority}"
+    @click="togglePurchased(items[index])"
+    >   
+     <!--otra forma es    :class="[purchased?'strikeout':'']" -->
       🔹 {{ label }}
     </li>
   </ul>
-  <p v-if="items.length === 0"> 🥀 lista de compras vacia 🥀 </p>
-  <p v-else>🔥 ingrese mas items </p>
+  <p  v-if ="items.length === 0">🥀 Lista de Compras Vacia 🥀</p>
+  <p v-else > 🔥 Ingrese más Items</p>
 </template>
 
-<style scoped>
-.shopping-cart-icon {
-  font-size: 2rem; /* Adjust the font-size value as per your desired size */
-}
-</style>
+
+
